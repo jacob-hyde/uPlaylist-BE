@@ -34,7 +34,7 @@ return [
     //Should be a class with a static @handle method. IE HandleSubscriptionCreateOrSwap::class
     //It should take in the user, subscription_plan, paymentable, and payment_method which can default to null
     //It should return a subscription model
-    'create_or_swap_subscription_callback' => null,
+    'create_or_swap_subscription_callback' => \App\Models\CuratorPlan::class,
 
     //A relationship to the user model for payouts which should have an attribute of paid_out_amount
     'payout_model_relationship' => null,

@@ -19,7 +19,7 @@ class SubscriptionPlanSeeder extends Seeder
     {
         $product_type = ProductType::where('type', 'curator-subscription')->first();
         $curator_plan = CuratorPlan::find(1);
-        $stripe_plan = App::environment('production') ? 'price_1I7posGVt72o2zxqmq01O5w3' : 'price_1I7poeGVt72o2zxqcbQcSnxq';
+        $stripe_plan = App::environment('production') ? 'price_1JX98SLv1af0LagsDj0fiQQU' : 'price_1JX97oLv1af0Lags92pmVHT3';
         SubscriptionPlan::updateOrCreate(['stripe_plan' => $stripe_plan], [
             'name' => 'Curator Pro',
             'type' => 'curator',

@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Http\Resources\Curator\CuratorPlanResource;
-use App\Models\Orders\SubscriptionPlan;
 use Illuminate\Database\Eloquent\Model;
+use KnotAShell\Orders\Models\SubscriptionPlan;
 
 /**
  * @property int $id
