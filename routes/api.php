@@ -45,6 +45,7 @@ Route::group(
             //Playlists
             //----------------------------------------------------------------------------------------------
             Route::group(['prefix' => 'playlist'], function () {
+                Route::get('/', [CuratorPlaylistController::class, 'playlists']);
                 Route::get('featured', [CuratorPlaylistController::class, 'featured']);
             });
         });
