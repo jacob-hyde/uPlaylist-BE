@@ -34,9 +34,6 @@ class Curator extends Model
 
     private static $whiteListFilter =[
         'id',
-        'email',
-        'username',
-        'spotify_id',
         'suspended',
         'user_first_name_like',
         'user_last_name_like',
@@ -48,7 +45,7 @@ class Curator extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'api_client_id', 'user_id', 'external_user_id', 'username', 'spotify_id', 'price', 'paid_out_amount', 'suspended', 'suspended_at', 'no_feedback_count', 'verified', 'verification', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id', 'api_client_id', 'user_id', 'price', 'paid_out_amount', 'suspended', 'suspended_at', 'no_feedback_count', 'verified', 'verification', 'created_at', 'updated_at', 'deleted_at'];
 
     protected $dates = [
         'last_payout',

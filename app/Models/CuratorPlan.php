@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Http\Resources\Curator\CuratorPlanResource;
-use ArtistRepublik\AROrders\Models\SubscriptionPlan;
+use App\Models\Orders\SubscriptionPlan;
 use Illuminate\Database\Eloquent\Model;
 
 /**

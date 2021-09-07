@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "996d3662bdbdeea513c8f07d0033014d",
+    "content-hash": "707df4151d89b0310497de45b7e46113",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1243,6 +1243,63 @@
             "time": "2021-06-30T20:03:07+00:00"
         },
         {
+            "name": "jacob-hyde/orders",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:jacob-hyde/orders.git",
+                "reference": "6b2e34a7315816827c082c76406f7d09faf9b1be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jacob-hyde/orders/zipball/6b2e34a7315816827c082c76406f7d09faf9b1be",
+                "reference": "6b2e34a7315816827c082c76406f7d09faf9b1be",
+                "shasum": ""
+            },
+            "require": {
+                "cartalyst/stripe": "^2.3",
+                "cartalyst/stripe-laravel": "^13.0",
+                "laravel/cashier": "^12.4",
+                "laravel/framework": "7.*|8.*",
+                "laravel/helpers": "^1.3",
+                "mehdi-fathi/eloquent-filter": "^2.5",
+                "paypal/paypal-checkout-sdk": "^1.0",
+                "paypal/paypal-payouts-sdk": "^1.0",
+                "paypal/rest-api-sdk-php": "^1.14",
+                "php": "^7.4|^8.0",
+                "spatie/laravel-stripe-webhooks": "^2.3",
+                "spatie/laravel-webhook-client": "^2.7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.3"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JacobHyde\\Orders\\OrdersServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JacobHyde\\Orders\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Jacob Hyde",
+                    "email": "jacob@jacobhyde.com"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/jacob-hyde/orders/tree/master",
+                "issues": "https://github.com/jacob-hyde/orders/issues"
+            },
+            "time": "2021-09-06T18:51:43+00:00"
+        },
+        {
             "name": "laravel/cashier",
             "version": "v12.15.0",
             "source": {
@@ -1488,6 +1545,62 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2021-08-31T13:55:57+00:00"
+        },
+        {
+            "name": "laravel/helpers",
+            "version": "v1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/helpers.git",
+                "reference": "febb10d8daaf86123825de2cb87f789a3371f0ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/helpers/zipball/febb10d8daaf86123825de2cb87f789a3371f0ac",
+                "reference": "febb10d8daaf86123825de2cb87f789a3371f0ac",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.8.0|^6.0|^7.0|^8.0",
+                "php": "^7.1.3|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0|^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Dries Vints",
+                    "email": "dries.vints@gmail.com"
+                }
+            ],
+            "description": "Provides backwards compatibility for helpers in the latest Laravel release.",
+            "keywords": [
+                "helpers",
+                "laravel"
+            ],
+            "support": {
+                "source": "https://github.com/laravel/helpers/tree/v1.4.1"
+            },
+            "time": "2021-02-16T15:27:11+00:00"
         },
         {
             "name": "laravel/passport",
@@ -2576,16 +2689,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.52.0",
+            "version": "2.53.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "369c0e2737c56a0f39c946dd261855255a6fccbe"
+                "reference": "f4655858a784988f880c1b8c7feabbf02dfdf045"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/369c0e2737c56a0f39c946dd261855255a6fccbe",
-                "reference": "369c0e2737c56a0f39c946dd261855255a6fccbe",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/f4655858a784988f880c1b8c7feabbf02dfdf045",
+                "reference": "f4655858a784988f880c1b8c7feabbf02dfdf045",
                 "shasum": ""
             },
             "require": {
@@ -2597,7 +2710,7 @@
             },
             "require-dev": {
                 "doctrine/orm": "^2.7",
-                "friendsofphp/php-cs-fixer": "^2.14 || ^3.0",
+                "friendsofphp/php-cs-fixer": "^3.0",
                 "kylekatarnls/multi-tester": "^2.0",
                 "phpmd/phpmd": "^2.9",
                 "phpstan/extension-installer": "^1.0",
@@ -2666,7 +2779,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-14T19:10:52+00:00"
+            "time": "2021-09-06T09:29:23+00:00"
         },
         {
             "name": "nette/schema",
@@ -4490,16 +4603,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.94.0",
+            "version": "v7.95.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "03cd6b5c1c4fc9087ddd1dd046457bff274294d6"
+                "reference": "ed372a1f6430b06dda408bb33b27d2be35ceaf07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/03cd6b5c1c4fc9087ddd1dd046457bff274294d6",
-                "reference": "03cd6b5c1c4fc9087ddd1dd046457bff274294d6",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/ed372a1f6430b06dda408bb33b27d2be35ceaf07",
+                "reference": "ed372a1f6430b06dda408bb33b27d2be35ceaf07",
                 "shasum": ""
             },
             "require": {
@@ -4545,9 +4658,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.94.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.95.0"
             },
-            "time": "2021-08-19T14:15:27+00:00"
+            "time": "2021-09-02T02:30:40+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -7586,21 +7699,21 @@
         },
         {
             "name": "fakerphp/faker",
-            "version": "v1.15.0",
+            "version": "v1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FakerPHP/Faker.git",
-                "reference": "89c6201c74db25fa759ff16e78a4d8f32547770e"
+                "reference": "271d384d216e5e5c468a6b28feedf95d49f83b35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/89c6201c74db25fa759ff16e78a4d8f32547770e",
-                "reference": "89c6201c74db25fa759ff16e78a4d8f32547770e",
+                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/271d384d216e5e5c468a6b28feedf95d49f83b35",
+                "reference": "271d384d216e5e5c468a6b28feedf95d49f83b35",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1 || ^8.0",
-                "psr/container": "^1.0",
+                "psr/container": "^1.0 || ^2.0",
                 "symfony/deprecation-contracts": "^2.2"
             },
             "conflict": {
@@ -7620,7 +7733,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "v1.15-dev"
+                    "dev-main": "v1.16-dev"
                 }
             },
             "autoload": {
@@ -7645,9 +7758,9 @@
             ],
             "support": {
                 "issues": "https://github.com/FakerPHP/Faker/issues",
-                "source": "https://github.com/FakerPHP/Faker/tree/v1.15.0"
+                "source": "https://github.com/FakerPHP/Faker/tree/v1.16.0"
             },
-            "time": "2021-07-06T20:39:40+00:00"
+            "time": "2021-09-06T14:53:37+00:00"
         },
         {
             "name": "filp/whoops",
@@ -9659,6 +9772,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-09-28T06:45:17+00:00"
         },
         {
@@ -9823,7 +9937,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "jacob-hyde/orders": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

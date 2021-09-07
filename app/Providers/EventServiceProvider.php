@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\SpotifyAccountLinked;
+use App\Events\UpdateUserSpotify;
+use App\Listeners\Spotify\FetchTokenForAccount;
+use App\Listeners\Spotify\FinishedSpotifyConnect;
+use App\Listeners\Spotify\UpdateAccountInformation;
+use App\Listeners\Spotify\UpdatePlaylists;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -17,6 +23,14 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        SpotifyAccountLinked::class => [
+            FetchTokenForAccount::class,
+        ],
+        UpdateUserSpotify::class => [
+            UpdateAccountInformation::class,
+            UpdatePlaylists::class,
+            FinishedSpotifyConnect::class,
         ],
     ];
 

@@ -70,4 +70,14 @@ class CuratorPlaylist extends Model
 
         return 100;
     }
+
+    public function updateFromSpotify()
+    {
+        $spotify_playlist = SpotifyPlaylist::findOrFail($this->spotify_playlist_id);
+        $this->name = $spotify_playlist->name;
+        $this->username = $spotify_playlist->user_spotify->display_name;
+        $this->followers = $spotify_playlist->followers;
+        $this->url = $spotify_playlist->url;
+        $this->img_url = $spotify_playlist->img_url;
+    }
 }

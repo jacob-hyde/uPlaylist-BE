@@ -37,7 +37,7 @@ return [
     */
 
     'guards' => [
-        'api-clients'=>[
+        'api-clients' => [
             'driver' => 'passport',
             'provider'=> 'api_client',
             'hash' => false,
@@ -45,11 +45,11 @@ return [
 
         'web' => [
             'driver' => 'session',
-            'provider' => 'api_client',
+            'provider' => 'users',
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'passport',
             'provider' => 'users',
             'hash' => false,
         ]

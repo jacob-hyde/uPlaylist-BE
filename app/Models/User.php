@@ -2,18 +2,24 @@
 
 namespace App\Models;
 
-use ArtistRepublik\AROrders\Models\Customer;
+use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Faker\Provider\Uuid;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Cashier\Billable;
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Str;
+use JacobHyde\Orders\Models\Customer;
 
-class User extends Model
+class User extends Authenticatable
 {
     use SoftDeletes;
+    use HasFactory;
     use Billable;
     use CascadeSoftDeletes;
+    use HasApiTokens;
 
     protected $table = 'users';
 
@@ -26,6 +32,7 @@ class User extends Model
         'first_name',
         'last_name',
         'email',
+        'password',
         'paypal_email',
         'stripe_id',
         'card_brand',
@@ -56,10 +63,88 @@ class User extends Model
         return $this->hasOne(Customer::class);
     }
 
+    public function spotify()
+    {
+        return $this->hasOne(UserSpotify::class);
+    }
+
+    public function generateToken()
+    {
+        $token_result = $this->createToken('Personal Access Token');
+        $token        = $token_result->token;
+        $token->expires_at = Carbon::now()->addWeeks(2);
+        $token->save();
+
+        return $token_result;
+    }
+
+    public function getLoginData(bool $with_token = true): array
+    {
+
+        $data = [
+            'name' => $this->first_name . ' ' . $this->last_name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'username' => $this->username,
+            'email' => $this->email,
+            'paypal_email' => $this->paypal_email,
+            'spotify_connected' => $this->spotify && $this->spotify->access_token ? true : false,
+            'price' => $this->curator->price,
+            'subscribed' => $this->subscribed('curator'),
+        ];
+
+        if ($with_token) {
+            $token = $this->generateToken();
+            $data['token'] = $token->accessToken;
+            $data['token_type'] = 'Bearer';
+            $data['expires_at'] = Carbon::parse($token->token->expires_at)->toDateTimeString();
+        }
+        return $data;
+    }
+
+    /**
+     * Generate a username from a email.
+     *
+     * @param string|null $email
+     * @return string
+     */
+    public static function generateUsername(?string $email = null): string
+    {
+        $username = preg_replace('/(@.*)$/', '', $email);
+
+        if (!$username) {
+            $username = Str::random(8);
+        }
+
+        $count    = self::where('username', 'LIKE', $username . '%')->count();
+        $username = $username . ($count > 0 ? $count + 1 : '');
+
+        if (self::where('username', $username)->withTrashed()->exists()) {
+            $username .= Str::random(5);
+        }
+
+        return $username;
+    }
+
+    public static function isUsernameAvailable(string $username, self $user = null): bool
+    {
+        $username = strtolower(trim($username));
+
+        if (!is_string($username) && !is_numeric($username)) {
+            return false;
+        }
+
+        $exists = self::where('username', $username)->first();
+        if (($user !== null && $exists && $exists->username !== $user->username) || ($exists && $user === null)) {
+            return false;
+        }
+
+        return preg_match('/^[\pL\pM\pN_-]+$/u', $username) > 0;
+    }
+
     public static function resolveUser()
     {
-        $external_user_id = request()->header('X-EXTERNAL-USER');
-        return User::where('external_user_id', $external_user_id)->where('api_client_id', auth()->user()->id)->first();
+        return auth('api')->user();
     }
 
 }

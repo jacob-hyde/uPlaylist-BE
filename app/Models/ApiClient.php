@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\WebhookServer\WebhookCall;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property int $id
@@ -20,10 +19,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $updated_at
  * @property string $deleted_at
  */
-class ApiClient extends Authenticatable implements JWTSubject
+class ApiClient extends Authenticatable
 {
     use HasApiTokens;
-    use HasRoles;
 
     /**
      * @var array
