@@ -92,6 +92,8 @@ class User extends Authenticatable
             'price' => $this->curator->price,
             'subscribed' => $this->subscribed('curator'),
             'subscription_id' => $this->subscribed('curator') ? $this->subscription('curator')->id : null,
+            'subscription_ends_at' => $this->subscribed('curator') ? $this->subscription('curator')->ends_at : null,
+            'payout' => convertCentsToDollars($this->curator->payout_amount),
         ];
 
         if ($with_token) {

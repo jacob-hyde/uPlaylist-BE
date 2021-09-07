@@ -37,6 +37,18 @@ Route::group(
 
         Route::get('genre', [GenreController::class, 'index']);
 
+        //----------------------------------------------------------------------------------------------
+        //Curator
+        //----------------------------------------------------------------------------------------------
+        Route::group(['prefix' => 'curator'], function () {
+            //----------------------------------------------------------------------------------------------
+            //Playlists
+            //----------------------------------------------------------------------------------------------
+            Route::group(['prefix' => 'playlist'], function () {
+                Route::get('featured', [CuratorPlaylistController::class, 'featured']);
+            });
+        });
+
         Route::group(['middleware' => 'auth:api'], function () {
             //----------------------------------------------------------------------------------------------
             //Auth
@@ -67,7 +79,6 @@ Route::group(
                     Route::delete('{playlist}', [CuratorPlaylistController::class, 'destroy']);
                     Route::get('featured-dates', [CuratorFeaturedPlaylistCalendarController::class, 'index']);
                     Route::post('promote', [CuratorFeaturedPlaylistCalendarController::class, 'store']);
-                    Route::get('featured', [CuratorPlaylistController::class, 'featured']);
                 });
                 //----------------------------------------------------------------------------------------------
                 //Orders

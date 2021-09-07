@@ -37,14 +37,14 @@ return [
     'create_or_swap_subscription_callback' => \App\Models\CuratorPlan::class,
 
     //A relationship to the user model for payouts which should have an attribute of paid_out_amount
-    'payout_model_relationship' => null,
+    'payout_model_relationship' => 'curator',
 
     //Should be a class with a static function called checkPayoutRules which takes a user and the payout amount and returns null or a error message. IE \App\Models\Curator
-    'payout_rules' => null,
+    'payout_rules' => \App\Models\Curator::class,
 
-    'payout_email_subject' => null,
+    'payout_email_subject' => 'uPlaylist Payout',
 
-    'payout_note' => null,
+    'payout_note' => 'uPlaylist Payout',
 
     //Array of different product types and how to calculate the coupon code price
     'coupon_calculations' => [],

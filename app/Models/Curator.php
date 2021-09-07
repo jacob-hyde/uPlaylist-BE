@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use ArtistRepublik\AROrders\Models\Payment;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use eloquentFilter\QueryFilter\ModelFilters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use KnotAShell\Orders\Models\Payment;
 
 /**
  * @property int $id
