@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
-use JacobHyde\Orders\Models\ProductType;
+use KnotAShell\Orders\Models\ProductType;
 
 class ProductTypeSeeder extends Seeder
 {

@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Models\CuratorPlan;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
-use JacobHyde\Orders\Models\ProductType;
-use JacobHyde\Orders\Models\SubscriptionPlan;
+use KnotAShell\Orders\Models\ProductType;
+use KnotAShell\Orders\Models\SubscriptionPlan;
 
 class SubscriptionPlanSeeder extends Seeder
 {

@@ -11,7 +11,7 @@ use Laravel\Cashier\Billable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
-use JacobHyde\Orders\Models\Customer;
+use KnotAShell\Orders\Models\Customer;
 
 class User extends Authenticatable
 {

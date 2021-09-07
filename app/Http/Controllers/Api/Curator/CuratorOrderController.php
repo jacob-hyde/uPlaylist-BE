@@ -12,12 +12,12 @@ use App\Http\Resources\OrderResource;
 use App\Models\CuratorOrder;
 use App\Models\User;
 use App\Models\UserTrack;
-use JacobHyde\Orders\App\Http\Resources\PaymentResource;
-use JacobHyde\Orders\Facades\Payment;
-use JacobHyde\Orders\Models\Cart;
-use JacobHyde\Orders\Models\Customer;
-use JacobHyde\Orders\Models\Order;
-use JacobHyde\Orders\Models\ProductType;
+use KnotAShell\Orders\App\Http\Resources\PaymentResource;
+use KnotAShell\Orders\Facades\Payment;
+use KnotAShell\Orders\Models\Cart;
+use KnotAShell\Orders\Models\Customer;
+use KnotAShell\Orders\Models\Order;
+use KnotAShell\Orders\Models\ProductType;
 
 class CuratorOrderController extends Controller
 {

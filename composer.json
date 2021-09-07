@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
-        "jacob-hyde/orders": "dev-master",
+        "knotashell/orders": "dev-master",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.54",
@@ -74,7 +74,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url":  "https://github.com/jacob-hyde/orders.git"
+            "url":  "https://github.com/KnotAShell/Orders.git"
         }
     ]
 }

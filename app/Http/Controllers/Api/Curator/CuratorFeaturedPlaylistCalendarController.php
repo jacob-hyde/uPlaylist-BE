@@ -7,11 +7,11 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Models\CuratorPlaylist;
 use App\Models\FeaturedPlaylistCalendar;
-use JacobHyde\Orders\App\Http\Resources\PaymentResource;
-use JacobHyde\Orders\Facades\Payment;
-use JacobHyde\Orders\Models\Customer;
-use JacobHyde\Orders\Models\Order;
-use JacobHyde\Orders\Models\ProductType;
+use KnotAShell\Orders\App\Http\Resources\PaymentResource;
+use KnotAShell\Orders\Facades\Payment;
+use KnotAShell\Orders\Models\Customer;
+use KnotAShell\Orders\Models\Order;
+use KnotAShell\Orders\Models\ProductType;
 
 class CuratorFeaturedPlaylistCalendarController extends Controller
 {
