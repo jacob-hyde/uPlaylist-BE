@@ -32,11 +32,11 @@ class CuratorPlaylistController extends Controller
 
     public function featured()
     {
-        $featured_playlist = FeaturedPlaylistCalendar::paid()->where('date', now()->toDateString())->first();
+        $featured_playlist = FeaturedPlaylistCalendar::paid()->where('date', now()->toDateString())->first()->playlist;
         if (!$featured_playlist) {
             $featured_playlist = CuratorPlaylist::inRandomOrder()->first();
         }
-        return (new CuratorPlaylistResource($featured_playlist->playlist))
+        return (new CuratorPlaylistResource($featured_playlist))
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
