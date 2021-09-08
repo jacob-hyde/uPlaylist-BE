@@ -193,4 +193,12 @@ class CuratorPlaylistController extends Controller
                 ->setStatusCode(Response::HTTP_OK);
         }
     }
+
+    public function search(Request $request)
+    {
+        $playlists = CuratorPlaylist::search($request->search)->paginate(10);
+        return CuratorPlaylistResource::collection($playlists)
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
+    }
 }

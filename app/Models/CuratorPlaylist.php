@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
 /**
  * @property int $id
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Cache;
 class CuratorPlaylist extends Model
 {
     use SoftDeletes;
+    use Searchable;
 
     /**
      * @var array
@@ -80,4 +82,11 @@ class CuratorPlaylist extends Model
         $this->url = $spotify_playlist->url;
         $this->img_url = $spotify_playlist->img_url;
     }
+
+    public function searchableAs()
+    {
+        return 'playlists_index';
+    }
+
+
 }
