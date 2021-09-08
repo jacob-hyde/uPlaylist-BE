@@ -56,7 +56,5 @@ class SpotifyRefreshUser extends Command
         foreach ($spotify_users as $user_spotify) {
             event(new UpdateUserSpotify($user_spotify));
         }
-        // $user = $user_id ? User::find($user_id) : null;
-        // UpdateCuratorPlaylists::dispatch($user)->onQueue('long-running-queue');
     }
 }

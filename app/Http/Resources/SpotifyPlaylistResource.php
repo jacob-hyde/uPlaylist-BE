@@ -24,6 +24,7 @@ class SpotifyPlaylistResource extends JsonResource
             'track_count' => $this->tracks_count,
             'curator_playlist' => $this->curator_playlist_count > 0,
             'price' => $this->curator_playlist ? convertCentsToDollars($this->curator_playlist->amount) : null,
+            'genres' => $this->curator_playlist ? GenreResource::collection($this->curator_playlist->genres) : null,
         ];
     }
 }

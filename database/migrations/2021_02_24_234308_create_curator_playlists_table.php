@@ -18,6 +18,7 @@ class CreateCuratorPlaylistsTable extends Migration
             $table->unsignedInteger('curator_id');
             $table->unsignedInteger('spotify_playlist_id');
             $table->string('name');
+            $table->string('slug');
             $table->string('username');
             $table->string('url');
             $table->string('img_url')->nullable();

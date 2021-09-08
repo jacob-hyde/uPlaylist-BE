@@ -3,6 +3,7 @@
 namespace App\Listeners\Spotify;
 
 use App\Jobs\UpdateSpotifyPlaylistTracks;
+use App\Models\CuratorPlaylist;
 use App\Models\SpotifyPlaylist;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -42,6 +43,22 @@ class UpdatePlaylists implements ShouldQueue
             ];
 
             $spotify_playlist = SpotifyPlaylist::updateOrCreate(['playlist_id' => $playlist->id, 'user_spotify_id' => $event->user_spotify->id], $playlist_data);
+
+            if ($spotify_playlist->curator_playlist) {
+                $slug = str_slug($playlist->name);
+                $slug_count = CuratorPlaylist::where('slug', $slug)->where('id', '!=', $spotify_playlist->curator_playlist->id)->count();
+
+                if ($slug_count > 0) {
+                    $slug = $slug . '-' . ($slug_count + 1);
+                }
+                $spotify_playlist->curator_playlist->update([
+                    'name' => $playlist->name,
+                    'img_url' => $playlist_image,
+                    'slug' => $slug,
+                    'username' => $event->user_spotify->display_name,
+                ]);
+            }
+
             UpdateSpotifyPlaylistTracks::dispatch($spotify_playlist);
             $upserted_playlist_ids[] = $spotify_playlist->id;
         }

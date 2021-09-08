@@ -25,9 +25,17 @@ class CuratorPlaylistController extends Controller
             $playlist->amount = convertDollarsToCents($request->price);
         }
         $playlist->updateFromSpotify();
-        $playlist->genres()->sync($request->genres);
         $playlist->save();
+        $playlist->genres()->sync($request->genres);
         return regularResponse(['message' => 'Playlist saved successfully']);
+    }
+
+    public function show(CuratorPlaylist $playlist)
+    {
+        $playlist->load(['spotify_playlist.tracks']);
+        return (new CuratorPlaylistResource($playlist))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function featured()

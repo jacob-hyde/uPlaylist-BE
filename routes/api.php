@@ -48,6 +48,7 @@ Route::group(
                 Route::get('/', [CuratorPlaylistController::class, 'playlists']);
                 Route::get('search', [CuratorPlaylistController::class, 'search']);
                 Route::get('featured', [CuratorPlaylistController::class, 'featured']);
+                Route::get('{playlist}', [CuratorPlaylistController::class, 'show']);
             });
         });
 

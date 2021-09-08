@@ -27,7 +27,12 @@ class CuratorPlaylist extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'curator_id', 'spotify_playlist_id', 'name', 'username', 'url', 'img_url', 'followers', 'amount', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id', 'curator_id', 'spotify_playlist_id', 'name', 'slug', 'username', 'url', 'img_url', 'followers', 'amount', 'created_at', 'updated_at', 'deleted_at'];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
     public function scopeCuratorNotSuspended($query)
     {
@@ -61,6 +66,11 @@ class CuratorPlaylist extends Model
         return $this->hasMany(CuratorOrder::class);
     }
 
+    public function spotify_playlist()
+    {
+        return $this->belongsTo(SpotifyPlaylist::class);
+    }
+
     public function getPlacementAttribute()
     {
         $reviewedOrdersCount = $this->curatorOrders()->reviewed()->count();
@@ -81,6 +91,19 @@ class CuratorPlaylist extends Model
         $this->followers = $spotify_playlist->followers;
         $this->url = $spotify_playlist->url;
         $this->img_url = $spotify_playlist->img_url;
+
+        $slug = str_slug($this->name);
+        if ($this->id) {
+            $slug_count = self::where('slug', $slug)->where('id', '!=', $this->id)->count();
+        } else {
+            $slug_count = self::where('slug', $slug)->count();
+        }
+
+        if ($slug_count > 0) {
+            $slug = $slug . '-' . ($slug_count + 1);
+        }
+
+        $this->slug = $slug;
     }
 
     public function searchableAs()

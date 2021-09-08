@@ -43,6 +43,13 @@ class UpdateSpotifyPlaylistTracks implements ShouldQueue
             return;
         }
         $this->_playlist->update(['followers' => $playlist_details->followers->total]);
+
+        if ($this->_playlist->curator_playlist) {
+            $curator_playlist = $this->_playlist->curator_playlist;
+            $curator_playlist->followers = $this->_playlist->followers;
+            $curator_playlist->save();
+        }
+
         $upserted_track_ids = [];
         $track_artist = '';
         foreach ($playlist_details->tracks->items as $item) {
