@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserTracksTable extends Migration
+class CreateApiClientWebhooksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,16 @@ class CreateUserTracksTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_tracks', function (Blueprint $table) {
+        Schema::create('api_client_webhooks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid');
-            $table->unsignedInteger('api_client_id')->nullable();
-            $table->unsignedInteger('user_id')->nullable();
-            $table->string('external_user_id')->nullable();
-            $table->string('name');
+            $table->unsignedInteger('api_client_id');
             $table->string('url');
-            $table->unsignedInteger('genre_id');
+            $table->json('events');
+            $table->string('secret');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('api_client_id')->references('id')->on('api_clients');
-            $table->foreign('genre_id')->references('id')->on('genres');
-            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -37,6 +33,6 @@ class CreateUserTracksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_tracks');
+        Schema::dropIfExists('api_client_webhooks');
     }
 }

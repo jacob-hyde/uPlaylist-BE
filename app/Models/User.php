@@ -80,7 +80,6 @@ class User extends Authenticatable
 
     public function getLoginData(bool $with_token = true): array
     {
-
         $data = [
             'name' => $this->first_name . ' ' . $this->last_name,
             'first_name' => $this->first_name,
@@ -94,6 +93,24 @@ class User extends Authenticatable
             'subscription_id' => $this->subscribed('curator') ? $this->subscription('curator')->id : null,
             'subscription_ends_at' => $this->subscribed('curator') ? $this->subscription('curator')->ends_at : null,
             'payout' => convertCentsToDollars($this->curator->payout_amount),
+        ];
+
+        if ($with_token) {
+            $token = $this->generateToken();
+            $data['token'] = $token->accessToken;
+            $data['token_type'] = 'Bearer';
+            $data['expires_at'] = Carbon::parse($token->token->expires_at)->toDateTimeString();
+        }
+        return $data;
+    }
+
+    public function getOrderUserLoginData(bool $with_token = true): array
+    {
+        $data = [
+            'name' => $this->first_name . ' ' . $this->last_name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'email' => $this->email,
         ];
 
         if ($with_token) {

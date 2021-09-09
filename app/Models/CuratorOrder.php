@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use ArtistRepublik\AROrders\App\Services\CouponCodeService;
-use ArtistRepublik\AROrders\Models\CouponCode;
 use ArtistRepublik\AROrders\Models\Order;
 use Faker\Provider\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use KnotAShell\Orders\App\Services\CouponCodeService;
+use KnotAShell\Orders\Models\CouponCode;
 
 /**
  * @property int $id
@@ -173,7 +173,7 @@ class CuratorOrder extends Model
             }
 
             $curator_order = self::create([
-                'api_client_id' => auth()->user()->id,
+                'api_client_id' => auth('api-clients')->user() ? auth('api-clients')->user()->id : null,
                 'curator_id' => $curator_playlist->curator_id,
                 'external_user_id' => $user->external_user_id,
                 'user_id' => $user->id,

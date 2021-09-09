@@ -16,7 +16,7 @@ class CreateCuratorOrdersTable extends Migration
         Schema::create('curator_orders', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid');
-            $table->unsignedInteger('api_client_id');
+            $table->unsignedInteger('api_client_id')->nullable();
             $table->unsignedInteger('user_id');
             $table->string('external_user_id')->nullable();
             $table->unsignedInteger('order_id')->nullable();

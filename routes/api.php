@@ -3,7 +3,8 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Curator\CuratorFeaturedPlaylistCalendarController;
 use App\Http\Controllers\Api\Curator\CuratorOrderController;
-use App\Http\Controllers\Api\CuratorPlaylistController;
+use App\Http\Controllers\Api\Curator\CuratorPlaylistController;
+use App\Http\Controllers\Api\Curator\UserTrackController;
 use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\SpotifyAccessController;
 use App\Http\Controllers\Api\SpotifyPlaylistController;
@@ -27,31 +28,6 @@ Route::group(
         'namespace' => 'Api'
     ],
     function () {
-        //----------------------------------------------------------------------------------------------
-        //Auth
-        //----------------------------------------------------------------------------------------------
-        Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
-            Route::post('register', [AuthController::class, 'register']);
-            Route::post('login', [AuthController::class, 'login']);
-        });
-
-        Route::get('genre', [GenreController::class, 'index']);
-
-        //----------------------------------------------------------------------------------------------
-        //Curator
-        //----------------------------------------------------------------------------------------------
-        Route::group(['prefix' => 'curator'], function () {
-            //----------------------------------------------------------------------------------------------
-            //Playlists
-            //----------------------------------------------------------------------------------------------
-            Route::group(['prefix' => 'playlist'], function () {
-                Route::get('/', [CuratorPlaylistController::class, 'playlists']);
-                Route::get('search', [CuratorPlaylistController::class, 'search']);
-                Route::get('featured', [CuratorPlaylistController::class, 'featured']);
-                Route::get('{playlist}', [CuratorPlaylistController::class, 'show']);
-            });
-        });
-
         Route::group(['middleware' => 'auth:api'], function () {
             //----------------------------------------------------------------------------------------------
             //Auth
@@ -79,16 +55,56 @@ Route::group(
                 //----------------------------------------------------------------------------------------------
                 Route::group(['prefix' => 'playlist'], function () {
                     Route::post('/', [CuratorPlaylistController::class, 'store']);
-                    Route::delete('{playlist}', [CuratorPlaylistController::class, 'destroy']);
                     Route::get('featured-dates', [CuratorFeaturedPlaylistCalendarController::class, 'index']);
                     Route::post('promote', [CuratorFeaturedPlaylistCalendarController::class, 'store']);
+                    Route::delete('{playlist}', [CuratorPlaylistController::class, 'destroy']);
                 });
                 //----------------------------------------------------------------------------------------------
                 //Orders
                 //----------------------------------------------------------------------------------------------
                 Route::group(['prefix' => 'order'], function () {
                     Route::get('/', [CuratorOrderController::class, 'index']);
+                    Route::put('{order}', [CuratorOrderController::class, 'update']);
                 });
+            });
+        });
+        //----------------------------------------------------------------------------------------------
+        //Auth
+        //----------------------------------------------------------------------------------------------
+        Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
+            Route::post('register', [AuthController::class, 'register']);
+            Route::post('login', [AuthController::class, 'login']);
+        });
+
+        Route::get('genre', [GenreController::class, 'index']);
+
+        //----------------------------------------------------------------------------------------------
+        //Curator
+        //----------------------------------------------------------------------------------------------
+        Route::group(['prefix' => 'curator'], function () {
+            //----------------------------------------------------------------------------------------------
+            //Playlists
+            //----------------------------------------------------------------------------------------------
+            Route::group(['prefix' => 'playlist'], function () {
+                Route::get('/', [CuratorPlaylistController::class, 'playlists']);
+                Route::get('search', [CuratorPlaylistController::class, 'search']);
+                Route::get('featured', [CuratorPlaylistController::class, 'featured']);
+                Route::get('{playlist}', [CuratorPlaylistController::class, 'show']);
+            });
+            //----------------------------------------------------------------------------------------------
+            //Order
+            //----------------------------------------------------------------------------------------------
+            Route::group(['prefix' => 'order'], function () {
+                Route::post('register', [CuratorOrderController::class, 'register']);
+                Route::post('/', [CuratorOrderController::class, 'store']);
+                Route::get('{order}', [CuratorOrderController::class, 'show']);
+            });
+            //----------------------------------------------------------------------------------------------
+            //User Track
+            //----------------------------------------------------------------------------------------------
+            Route::group(['prefix' => 'user-track'], function() {
+                Route::post('/', [UserTrackController::class, 'store']);
+                Route::put('{user_track}', [UserTrackController::class, 'update']);
             });
         });
     }

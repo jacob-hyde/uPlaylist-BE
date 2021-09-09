@@ -7,9 +7,8 @@ use App\Http\Requests\UserTrackCreateRequest;
 use App\Http\Requests\UserTrackUpdateRequest;
 use App\Http\Resources\UserTrackResource;
 use App\Models\UserTrack;
-use ArtistRepublik\AROrders\Models\Cart;
-use ArtistRepublik\AROrders\Models\Intent;
 use Illuminate\Http\Response;
+use KnotAShell\Orders\Models\Intent;
 
 class UserTrackController extends Controller
 {
@@ -42,13 +41,18 @@ class UserTrackController extends Controller
     public function store(UserTrackCreateRequest $request)
     {
         $data = $request->only(['name', 'url', 'genre_id', 'external_user_id']);
-        $data['api_client_id'] = auth()->user()->id;
+        if (auth('api-clients')->user()) {
+            $data['api_client_id'] = auth('api-clients')->user()->id;
+        }
+        if (auth()->user()) {
+            $data['user_id'] = auth()->user()->id;
+        }
         if (!isset($data['external_user_id']) && $request->header('X-EXTERNAL-USER')) {
             $data['external_user_id'] = $request->header('X-EXTERNAL-USER');
         }
         $user_track = UserTrack::create($data);
 
-        Intent::createIntent(auth()->user()->id, UserTrack::INTENT_STEP_CREATED, $user_track);
+        // Intent::createIntent(auth()->user()->id, UserTrack::INTENT_STEP_CREATED, $user_track);
 
         return (new UserTrackResource($user_track))
             ->response()
@@ -99,9 +103,9 @@ class UserTrackController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-    public function cart(UserTrack $user_track)
-    {
-        $cart = Cart::createCart(auth()->user()->id, $user_track);
-        return regularResponse(['key' => $cart->uuid], true, null, Response::HTTP_CREATED);
-    }
+    // public function cart(UserTrack $user_track)
+    // {
+    //     $cart = Cart::createCart(auth()->user()->id, $user_track);
+    //     return regularResponse(['key' => $cart->uuid], true, null, Response::HTTP_CREATED);
+    // }
 }

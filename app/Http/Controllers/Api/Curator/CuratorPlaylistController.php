@@ -8,86 +8,56 @@ use App\Http\Resources\Curator\CuratorPlaylistResource;
 use App\Models\ApiClient;
 use App\Models\Curator;
 use App\Models\CuratorPlaylist;
+use App\Models\SpotifyPlaylist;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CuratorPlaylistController extends Controller
 {
-
-    public function index(Request $request)
-    {
-        $external_user = $request->header('X-EXTERNAL-USER');
-        $curator_playlists = CuratorPlaylist::whereHas('curator', function ($q) use ($external_user) {
-            return $q->where('api_client_id', auth()->user()->id)->where('external_user_id', $external_user);
-        })->get();
-
-        return CuratorPlaylistInternalResource::collection($curator_playlists)
-            ->response()
-            ->setStatusCode(Response::HTTP_OK);
-    }
-
     public function store(Request $request)
     {
-        $external_user = $request->header('X-EXTERNAL-USER');
-        $curator = Curator::where('api_client_id', auth()->user()->id)->where('external_user_id', $external_user)->first();
-        $current_curator_playlist_ids = CuratorPlaylist::whereHas('curator', function ($q) use ($external_user) {
-            return $q->where('api_client_id', auth()->user()->id)->where('external_user_id', $external_user);
-        })->get()->pluck('id')->toArray();
-        $synced_curator_playlist_ids = [];
-        $webhook_events = [
-            'playlists-updated' => [],
-            'playlists-deleted' => [],
-        ];
-        foreach ($request->selected as $playlist) {
-            $price = $playlist['price'];
-            if ($price != null && $price > $curator->price) {
-                $price = $curator->price;
-            }
-            $curator_playlist = CuratorPlaylist::withTrashed()
-                ->where('curator_id', $curator->id)
-                ->where('spotify_playlist_id', $playlist['spotify_playlist_id'])->first();
-            if ($curator_playlist) {
-                $curator_playlist->update(['amount' => convertDollarsToCents($price)]);
-                if ($curator_playlist->trashed()) {
-                    $curator_playlist->restore();
-                }
-                $synced_curator_playlist_ids[] = $curator_playlist->id;
-            } else {
-                $curator_playlist = CuratorPlaylist::create([
-                                                            'spotify_playlist_id' => $playlist['spotify_playlist_id'],
-                                                            'curator_id' => $curator->id,
-                                                            'name' => $playlist['name'],
-                                                            'username' => $playlist['username'],
-                                                            'followers' => $playlist['followers'],
-                                                            'amount' => convertDollarsToCents($price),
-                                                            'url' => $playlist['url'],
-                                                            'img_url' => $playlist['image_url'],
-                                                        ]);
-            }
-            $curator_playlist->genres()->sync(collect($playlist['genres'])->pluck('id'));
-            $webhook_events['playlists-updated'][] = $curator_playlist->id;
+        $user = auth()->user();
+        $playlist = CuratorPlaylist::where('spotify_playlist_id', $request->id)->first();
+        if ($playlist) {
+            $playlist->amount = convertDollarsToCents($request->price);
+        } else {
+            $playlist = new CuratorPlaylist();
+            $playlist->curator_id = $user->curator->id;
+            $playlist->spotify_playlist_id = $request->id;
+            $playlist->amount = convertDollarsToCents($request->price);
         }
-        CuratorPlaylist::whereIn('id', array_diff($current_curator_playlist_ids, $synced_curator_playlist_ids))->delete();
+        $playlist->updateFromSpotify();
+        $playlist->save();
+        $playlist->genres()->sync($request->genres);
 
-        $webhook_events['playlists-deleted'] = array_diff($current_curator_playlist_ids, $synced_curator_playlist_ids);
         $api_clients = ApiClient::with(['webhooks'])->whereHas('webhooks')->get();
-
-        foreach ($webhook_events as $event => $ids) {
-            if (count($ids) === 0) {
-                continue;
-            }
-            foreach ($api_clients as $api_client) {
-                $api_client->sendWebhookEvent($event, ['playlist_ids' => $ids]);
-            }
+        foreach ($api_clients as $api_client) {
+            $api_client->sendWebhookEvent('playlists-updated', ['playlist_ids' => [$playlist->id]]);
         }
 
-        $curator_playlists = CuratorPlaylist::whereHas('curator', function ($q) use ($external_user) {
-            return $q->where('api_client_id', auth()->user()->id)->where('external_user_id', $external_user);
-        })->get();
+        return regularResponse(['message' => 'Playlist saved successfully']);
+    }
 
-        return CuratorPlaylistInternalResource::collection($curator_playlists)
+    public function destroy(SpotifyPlaylist $playlist)
+    {
+        if ($playlist->curator_playlist) {
+            $playlist->curator_playlist->delete();
+        }
+
+        $api_clients = ApiClient::with(['webhooks'])->whereHas('webhooks')->get();
+        foreach ($api_clients as $api_client) {
+            $api_client->sendWebhookEvent('playlists-deleted', ['playlist_ids' => [$playlist->id]]);
+        }
+
+        return regularResponse();
+    }
+
+    public function show(CuratorPlaylist $playlist)
+    {
+        $playlist->load(['spotify_playlist.tracks']);
+        return (new CuratorPlaylistResource($playlist))
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -233,32 +203,12 @@ class CuratorPlaylistController extends Controller
         }
     }
 
-    public function updatePlaylists(Request $request)
+    public function search(Request $request)
     {
-        $playlists = json_decode($request->playlists);
-        $updated_playlists = [];
-        foreach ($playlists as $playlist) {
-            $playlist = (array) $playlist;
-            $curator_playlist = CuratorPlaylist::where('spotify_playlist_id', $playlist['playlist_id'])->first();
-            if ($curator_playlist) {
-                $curator_playlist->update([
-                    'name' => $playlist['name'],
-                    'followers' => $playlist['followers'] ? $playlist['followers'] : 0,
-                    'img_url' => $playlist['image_url'],
-                    'url' => $playlist['url'],
-                    'username' => $playlist['spotify_id'],
-                ]);
-                $updated_playlists[] = $curator_playlist->id;
-            }
-            if ($curator_playlist && $curator_playlist->curator) {
-                $curator_playlist->curator->update(['spotify_id' => $playlist['spotify_id']]);
-            }
-        }
-
-        //Send webhook to APIClients with playlist updates
-        $api_clients = ApiClient::with(['webhooks'])->whereHas('webhooks')->get();
-        foreach ($api_clients as $api_client) {
-            $api_client->sendWebhookEvent('playlists-updated', ['playlist_ids' => $updated_playlists]);
-        }
+        $playlists = CuratorPlaylist::search($request->search)->paginate(10);
+        return CuratorPlaylistResource::collection($playlists)
+                ->response()
+                ->setStatusCode(Response::HTTP_OK);
     }
+
 }

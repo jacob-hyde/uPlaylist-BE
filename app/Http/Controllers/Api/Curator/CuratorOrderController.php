@@ -7,20 +7,33 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CuratorOrderCreateRequest;
 use App\Http\Requests\CuratorOrderUpdateRequest;
+use App\Http\Requests\OrderRegisterRequest;
 use App\Http\Resources\Curator\CuratorOrderResource;
 use App\Http\Resources\OrderResource;
 use App\Models\CuratorOrder;
 use App\Models\User;
 use App\Models\UserTrack;
-use KnotAShell\Orders\App\Http\Resources\PaymentResource;
-use KnotAShell\Orders\Facades\Payment;
-use KnotAShell\Orders\Models\Cart;
-use KnotAShell\Orders\Models\Customer;
-use KnotAShell\Orders\Models\Order;
-use KnotAShell\Orders\Models\ProductType;
+use JacobHyde\Orders\App\Http\Resources\PaymentResource;
+use JacobHyde\Orders\Facades\Payment;
+use JacobHyde\Orders\Models\Cart;
+use JacobHyde\Orders\Models\Customer;
+use JacobHyde\Orders\Models\Order;
+use JacobHyde\Orders\Models\ProductType;
 
 class CuratorOrderController extends Controller
 {
+
+    public function register(OrderRegisterRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            return regularResponse($user->getOrderUserLoginData(), true, null, Response::HTTP_OK);
+        }
+        $data = $request->all();
+        $user = User::create($data);
+        return regularResponse($user->getOrderUserLoginData(), true, null, Response::HTTP_CREATED);
+    }
+
     /**
      * @OA\Get(
      *      path="/curator/order",
@@ -75,12 +88,21 @@ class CuratorOrderController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $corders_query = CuratorOrder::with(['user', 'order', 'playlist', 'playlist.genres', 'curator', 'user_track'])
-            ->paid()
-            ->select('curator_orders.*')
-            ->whereHas('curator', function ($query) use ($user) {
-                return $query->where('user_id', $user->id);
-            });
+        if (!$user) {
+            $api_client = auth('api-clients')->user();
+            $corders_query = CuratorOrder::with(['user', 'order', 'playlist', 'playlist.genres', 'curator', 'user_track'])
+                ->paid()
+                ->select('curator_orders.*');
+            $corders_query->where('curator_orders.api_client_id', $api_client->id);
+        } else {
+            $corders_query = CuratorOrder::with(['user', 'order', 'playlist', 'playlist.genres', 'curator', 'user_track'])
+                ->paid()
+                ->select('curator_orders.*')
+                ->whereHas('curator', function ($query) use ($user) {
+                    return $query->where('user_id', $user->id);
+                });
+        }
+
         if ($curator = $request->query('curator')) {
             if (is_numeric($curator)) {
                 $corders_query->where('curator_id', $curator);
@@ -89,6 +111,14 @@ class CuratorOrderController extends Controller
                     return $q->where('email', $curator);
                 });
             }
+        }
+        if ($external_user = $request->header('X-EXTERNAL-USER')) {
+            $corders_query->whereHas('curator', function ($q) use ($external_user) {
+                return $q->where('external_user_id', $external_user);
+            });
+        }
+        if ($exteneral_user = $request->query('external_user')) {
+            $corders_query->where('curator_orders.external_user_id', $exteneral_user);
         }
         if ($email = $request->query('email')) {
             $corders_query->whereHas('user', function ($q) use ($email) {
@@ -136,13 +166,16 @@ class CuratorOrderController extends Controller
      */
     public function store(CuratorOrderCreateRequest $request)
     {
-        $seller = auth()->user();
+        $seller = auth('api-clients')->user();
+        $user = auth()->user();
         $user_track = UserTrack::where('uuid', $request->user_track_uuid)->firstOrFail();
 
-        $user_data = $request->only(['first_name', 'last_name', 'email']);
-        $user_data['external_user_id'] = $request->external_user_id ? $request->external_user_id : $request->header('X-EXTERNAL-USER');
-        $user_data['api_client_id'] = auth()->user()->id;
-        $user = User::updateOrCreate(['email' => $request->email], $user_data);
+        if (!$user) {
+            $user_data = $request->only(['first_name', 'last_name', 'email']);
+            $user_data['external_user_id'] = $request->external_user_id ? $request->external_user_id : $request->header('X-EXTERNAL-USER');
+            $user_data['api_client_id'] = auth()->user()->id;
+            $user = User::updateOrCreate(['email' => $request->email], $user_data);
+        }
 
         $curator_orders = CuratorOrder::createOrdersFromPlaylistIds($request->playlists, $user_track, $user);
         $amount = convertCentsToDollars(CuratorOrder::getCostFromPlaylistIds($request->playlists));
@@ -151,7 +184,7 @@ class CuratorOrderController extends Controller
             return $accum;
         }, 0));
 
-        if ($seller->hasRole('admin')) {
+        if (auth()->user()) {
             $payment = Payment::setAmount($amount)
                 ->setFee(0)
                 ->setUser($user)
@@ -197,7 +230,7 @@ class CuratorOrderController extends Controller
             $user_track->cart->update(['user_id' => $user->id]);
         }
 
-        if ($seller->hasRole('admin')) {
+        if (auth()->user()) {
             return (new PaymentResource($payment))
                 ->response()
                 ->setStatusCode(Response::HTTP_CREATED);
@@ -261,7 +294,9 @@ class CuratorOrderController extends Controller
 
         $corder->update($data);
 
-        $corder->api_client->sendWebhookEvent('order-updated', ['curator_order' => $corder->uuid]);
+        if ($corder->api_client) {
+            $corder->api_client->sendWebhookEvent('order-updated', ['curator_order' => $corder->uuid]);
+        }
 
         $corder->load(['user', 'order', 'playlist', 'playlist.genres', 'curator', 'curator.user', 'user_track']);
 

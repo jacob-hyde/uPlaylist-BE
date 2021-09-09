@@ -20,9 +20,10 @@ class CreateUsersTable extends Migration
             $table->string('external_user_id')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('username');
+            $table->string('username')->nullable();
             $table->string('email');
-            $table->string('password');
+            $table->string('phone')->nullable();
+            $table->string('password')->nullable();
             $table->string('paypal_email')->nullable();
             $table->string('stripe_id')->nullable()->index();
             $table->string('card_brand')->nullable();
