@@ -9,7 +9,7 @@ return [
 
     'route_prefix' => 'api/v1',
 
-    'middleware' => ['api', 'auth:api'],
+    'middleware' => ['api'],
 
     'stripe_secret' => env('STRIPE_SECRET', null),
 
