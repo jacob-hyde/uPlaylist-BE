@@ -8,6 +8,7 @@ use App\Http\Resources\Curator\CuratorPlaylistResource;
 use App\Models\ApiClient;
 use App\Models\Curator;
 use App\Models\CuratorPlaylist;
+use App\Models\FeaturedPlaylistCalendar;
 use App\Models\SpotifyPlaylist;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -36,6 +37,19 @@ class CuratorPlaylistController extends Controller
         }
 
         return regularResponse(['message' => 'Playlist saved successfully']);
+    }
+
+    public function featured()
+    {
+        $featured_playlist = FeaturedPlaylistCalendar::paid()->where('date', now()->toDateString())->first();
+        if (!$featured_playlist) {
+            $featured_playlist = CuratorPlaylist::inRandomOrder()->first();
+        } else {
+            $featured_playlist = $featured_playlist->playlist;
+        }
+        return (new CuratorPlaylistResource($featured_playlist))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(SpotifyPlaylist $playlist)
@@ -164,17 +178,17 @@ class CuratorPlaylistController extends Controller
                 ->response()
                 ->setStatusCode(Response::HTTP_OK);
         }
-        if ($name = $request->query('name')) {
-            $playlists_query->where('name', 'like', '%'.$name.'%');
+        if ($search = $request->query('search')) {
+            $playlists_query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('username', 'like', '%' . $search . '%');
+            });
         }
-        if ($name = $request->has('exclude_playlist_ids')) {
+        if ($request->has('exclude_playlist_ids')) {
             $playlists_query->whereNotIn('id', array_filter($request->exclude_playlist_ids));
         }
         if ($curator_id = $request->has('exclude_curator_id')) {
             $playlists_query->where('curator_id', '!=', $curator_id);
-        }
-        if ($username = $request->query('username')) {
-            $playlists_query->where('username', 'like', '%'.$username.'%');
         }
         if (($followers_min = $request->query('followersMin')) && ($followers_max = $request->query('followersMax'))) {
             $playlists_query->whereBetween('followers', [$followers_min, $followers_max]);

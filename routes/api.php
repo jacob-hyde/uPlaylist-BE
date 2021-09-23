@@ -64,7 +64,7 @@ Route::group(
                 //----------------------------------------------------------------------------------------------
                 Route::group(['prefix' => 'order'], function () {
                     Route::get('/', [CuratorOrderController::class, 'index']);
-                    Route::put('{order}', [CuratorOrderController::class, 'update']);
+                    Route::put('{corder}', [CuratorOrderController::class, 'update']);
                 });
             });
         });

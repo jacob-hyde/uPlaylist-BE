@@ -10,15 +10,17 @@ use App\Http\Requests\CuratorOrderUpdateRequest;
 use App\Http\Requests\OrderRegisterRequest;
 use App\Http\Resources\Curator\CuratorOrderResource;
 use App\Http\Resources\OrderResource;
+use App\Mail\CuratorOrderUpdatedMail;
 use App\Models\CuratorOrder;
 use App\Models\User;
 use App\Models\UserTrack;
-use JacobHyde\Orders\App\Http\Resources\PaymentResource;
-use JacobHyde\Orders\Facades\Payment;
-use JacobHyde\Orders\Models\Cart;
-use JacobHyde\Orders\Models\Customer;
-use JacobHyde\Orders\Models\Order;
-use JacobHyde\Orders\Models\ProductType;
+use Illuminate\Support\Facades\Mail;
+use KnotAShell\Orders\App\Http\Resources\PaymentResource;
+use KnotAShell\Orders\Facades\Payment;
+use KnotAShell\Orders\Models\Cart;
+use KnotAShell\Orders\Models\Customer;
+use KnotAShell\Orders\Models\Order;
+use KnotAShell\Orders\Models\ProductType;
 
 class CuratorOrderController extends Controller
 {
@@ -167,13 +169,13 @@ class CuratorOrderController extends Controller
     public function store(CuratorOrderCreateRequest $request)
     {
         $seller = auth('api-clients')->user();
-        $user = auth()->user();
+        $user = auth('api')->user();
         $user_track = UserTrack::where('uuid', $request->user_track_uuid)->firstOrFail();
 
         if (!$user) {
             $user_data = $request->only(['first_name', 'last_name', 'email']);
             $user_data['external_user_id'] = $request->external_user_id ? $request->external_user_id : $request->header('X-EXTERNAL-USER');
-            $user_data['api_client_id'] = auth()->user()->id;
+            $user_data['api_client_id'] = auth('api-clients')->user()->id;
             $user = User::updateOrCreate(['email' => $request->email], $user_data);
         }
 
@@ -184,7 +186,7 @@ class CuratorOrderController extends Controller
             return $accum;
         }, 0));
 
-        if (auth()->user()) {
+        if (auth('api')->user()) {
             $payment = Payment::setAmount($amount)
                 ->setFee(0)
                 ->setUser($user)
@@ -208,7 +210,8 @@ class CuratorOrderController extends Controller
             Order::STATUS_PENDING,
             $payment->amount,
             $curator_product_type,
-            !empty($seller) ? $seller->id : null, $seller->id
+            $seller ? $seller->id : null,
+            $seller ? $seller->id : null,
         );
 
         foreach ($curator_orders as $curator_order) {
@@ -218,19 +221,7 @@ class CuratorOrderController extends Controller
             $order->orderables()->create(['orderable_id' => $curator_order->id, 'orderable_type' => $curator_order->getMorphClass()]);
         }
 
-        if ($user_track->intent) {
-            $user_track->intent->update([
-                'step' => 'payment attempted',
-            ]);
-        }
-
-        if (!$user_track->cart) {
-            Cart::createCart($seller->id, $user_track, $user);
-        } else {
-            $user_track->cart->update(['user_id' => $user->id]);
-        }
-
-        if (auth()->user()) {
+        if (auth('api')->user()) {
             return (new PaymentResource($payment))
                 ->response()
                 ->setStatusCode(Response::HTTP_CREATED);
@@ -299,6 +290,8 @@ class CuratorOrderController extends Controller
         }
 
         $corder->load(['user', 'order', 'playlist', 'playlist.genres', 'curator', 'curator.user', 'user_track']);
+
+        Mail::to($corder->user->email)->queue(new CuratorOrderUpdatedMail($corder));
 
         return (new CuratorOrderResource($corder))
             ->response()

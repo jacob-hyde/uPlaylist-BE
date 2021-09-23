@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use ArtistRepublik\AROrders\Models\Order;
+use KnotAShell\Orders\Models\Order;
 use Faker\Provider\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

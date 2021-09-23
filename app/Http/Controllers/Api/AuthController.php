@@ -21,7 +21,11 @@ class AuthController extends Controller
             return regularResponse([], false, 'UNATHORIZED', Response::HTTP_UNAUTHORIZED, 'Unauthorized');
         }
         $user = auth()->user();
-        return regularResponse($user->getLoginData());
+        if ($user->curator) {
+            return regularResponse($user->getLoginData());
+        } else {
+            return regularResponse($user->getOrderUserLoginData())
+        }
     }
 
     public function register(RegisterRequest $request)
@@ -43,7 +47,11 @@ class AuthController extends Controller
     public function user()
     {
         $user = auth('api')->user();
-        return regularResponse($user->getLoginData(false));
+        if ($user->curator) {
+            return regularResponse($user->getLoginData());
+        } else {
+            return regularResponse($user->getOrderUserLoginData())
+        }
     }
 
     public function update(UserUpdateRequest $request)

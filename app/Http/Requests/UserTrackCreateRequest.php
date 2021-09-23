@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OrderRegisterRequest extends FormRequest
+class UserTrackCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class OrderRegisterRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth('api')->check();
     }
 
     /**
@@ -24,10 +24,9 @@ class OrderRegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'email' => 'required|email',
-            'phone' => 'string|nullable',
+            'name' => 'required|string',
+            'url' => 'required|string|regex:/^(https:\/\/open\.spotify\.com\/)(.+)$/i',
+            'genre_id' => 'required|exists:genres,id',
         ];
     }
 }

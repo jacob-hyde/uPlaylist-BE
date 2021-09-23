@@ -86,6 +86,7 @@ class User extends Authenticatable
             'last_name' => $this->last_name,
             'username' => $this->username,
             'email' => $this->email,
+            'is_curator' => true,
             'paypal_email' => $this->paypal_email,
             'spotify_connected' => $this->spotify && $this->spotify->access_token ? true : false,
             'price' => $this->curator->price,

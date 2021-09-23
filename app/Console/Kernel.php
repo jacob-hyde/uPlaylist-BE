@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\QueueCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,7 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->job(new QueueCommand('spotify:refresh-user'), 'high')->hourly();
+        $schedule->job(new QueueCommand('curator:set-curator-prices'), 'high')->daily();
     }
 
     /**
