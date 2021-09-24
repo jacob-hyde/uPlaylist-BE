@@ -24,7 +24,7 @@ class AuthController extends Controller
         if ($user->curator) {
             return regularResponse($user->getLoginData());
         } else {
-            return regularResponse($user->getOrderUserLoginData())
+            return regularResponse($user->getOrderUserLoginData());
         }
     }
 
@@ -50,7 +50,7 @@ class AuthController extends Controller
         if ($user->curator) {
             return regularResponse($user->getLoginData());
         } else {
-            return regularResponse($user->getOrderUserLoginData())
+            return regularResponse($user->getOrderUserLoginData());
         }
     }
 
