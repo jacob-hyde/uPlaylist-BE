@@ -16,7 +16,7 @@ class FinishedSpotifyConnect implements ShouldQueue
     public function handle($event)
     {
         if ($event->initial) {
-            event(new SpotifyFinished($event->user_spotify));
+            // event(new SpotifyFinished($event->user_spotify));
         }
     }
 }

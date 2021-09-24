@@ -2,10 +2,13 @@
 
 namespace App\Listeners\Spotify;
 
+use App\Events\SpotifyFinished;
 use App\Jobs\UpdateSpotifyPlaylistTracks;
+use App\Jobs\UpdateSpotifyPlaylistTracksBatch;
 use App\Models\CuratorPlaylist;
 use App\Models\SpotifyPlaylist;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Bus;
 
 class UpdatePlaylists implements ShouldQueue
 {
@@ -20,6 +23,8 @@ class UpdatePlaylists implements ShouldQueue
         $current_playlist_ids = $event->user_spotify->playlists->pluck('id')->toArray();
         $playlists = $event->spotify_service->getUserPlaylists();
         $upserted_playlist_ids = [];
+        $chainedJobs = [];
+        $spotifyPlaylists = [];
         foreach ($playlists->items as $playlist) {
             $playlist_image = null;
             if (! empty($playlist->images)) {
@@ -58,8 +63,8 @@ class UpdatePlaylists implements ShouldQueue
                     'username' => $event->user_spotify->display_name,
                 ]);
             }
-
-            UpdateSpotifyPlaylistTracks::dispatch($spotify_playlist);
+            $spotifyPlaylists[] = $spotify_playlist;;
+            // UpdateSpotifyPlaylistTracks::dispatch($spotify_playlist);
             $upserted_playlist_ids[] = $spotify_playlist->id;
         }
         $delete_ids = array_diff($current_playlist_ids, $upserted_playlist_ids);
@@ -67,5 +72,11 @@ class UpdatePlaylists implements ShouldQueue
             $playlist = SpotifyPlaylist::find($id);
             $playlist->delete();
         }
+        Bus::chain([
+            new UpdateSpotifyPlaylistTracksBatch($spotifyPlaylists),
+            function () use ($event) {
+                event(new SpotifyFinished($event->user_spotify));
+            },
+        ])->dispatch();
     }
 }

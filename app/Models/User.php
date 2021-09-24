@@ -81,6 +81,7 @@ class User extends Authenticatable
     public function getLoginData(bool $with_token = true): array
     {
         $data = [
+            'id' => $this->id,
             'name' => $this->first_name . ' ' . $this->last_name,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,

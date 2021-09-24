@@ -36,6 +36,13 @@ class SpotifyFinished implements ShouldBroadcastNow
         return 'SpotifyFinished';
     }
 
+    public function broadcastWith(): array
+    {
+        return [
+            'success' => true,
+        ];
+    }
+
     /**
      * Get the channels the event should broadcast on.
      *

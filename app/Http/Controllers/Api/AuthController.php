@@ -21,11 +21,7 @@ class AuthController extends Controller
             return regularResponse([], false, 'UNATHORIZED', Response::HTTP_UNAUTHORIZED, 'Unauthorized');
         }
         $user = auth()->user();
-        if ($user->curator) {
-            return regularResponse($user->getLoginData());
-        } else {
-            return regularResponse($user->getOrderUserLoginData());
-        }
+        return regularResponse($user->getLoginData());
     }
 
     public function register(RegisterRequest $request)

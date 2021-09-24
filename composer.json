@@ -14,6 +14,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "knotashell/orders": "dev-master",
         "laravel/framework": "^8.54",
+        "laravel/horizon": "^5.7",
         "laravel/passport": "^10.1",
         "laravel/sanctum": "^2.11",
         "laravel/scout": "^9.2",
@@ -22,6 +23,7 @@
         "paypal/paypal-checkout-sdk": "^1.0",
         "paypal/paypal-payouts-sdk": "^1.0",
         "paypal/rest-api-sdk-php": "^1.14",
+        "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-stripe-webhooks": "^2.3",
         "spatie/laravel-webhook-client": "^2.7"
     },

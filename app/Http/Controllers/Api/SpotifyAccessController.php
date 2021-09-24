@@ -56,4 +56,17 @@ class SpotifyAccessController extends Controller
 
         return ['data' => ['success' => true]];
     }
+
+    public function disconnectSpotify()
+    {
+        $user = auth('api')->user();
+        $user_spotify = $user->spotify;
+        foreach ($user_spotify->playlists as $playlist) {
+            $playlist->tracks()->delete();
+        }
+        $user_spotify->playlists()->delete();
+        $user_spotify->delete();
+        $user->curator->playlists()->delete();
+        return regularResponse([]);
+    }
 }

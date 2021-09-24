@@ -43,6 +43,7 @@ Route::group(
             Route::group(['prefix' => 'spotify'], function () {
                 Route::get('connect-url', [SpotifyAccessController::class, 'spotifyConnectUrl']);
                 Route::get('refresh', [SpotifyAccessController::class, 'refreshSpotify']);
+                Route::get('disconnect', [SpotifyAccessController::class, 'disconnectSpotify']);
                 Route::post('/', [SpotifyAccessController::class, 'store']);
                 Route::get('playlists', [SpotifyPlaylistController::class, 'index']);
             });
