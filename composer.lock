@@ -1322,12 +1322,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:KnotAShell/Orders.git",
-                "reference": "6a30b4ff1c8fbd636cfd661c8aa19f9587446072"
+                "reference": "02c0d48894b933d68fdec38df6016c5444d40a4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnotAShell/Orders/zipball/6a30b4ff1c8fbd636cfd661c8aa19f9587446072",
-                "reference": "6a30b4ff1c8fbd636cfd661c8aa19f9587446072",
+                "url": "https://api.github.com/repos/KnotAShell/Orders/zipball/02c0d48894b933d68fdec38df6016c5444d40a4a",
+                "reference": "02c0d48894b933d68fdec38df6016c5444d40a4a",
                 "shasum": ""
             },
             "require": {
@@ -1371,7 +1371,7 @@
                 "source": "https://github.com/KnotAShell/Orders/tree/master",
                 "issues": "https://github.com/KnotAShell/Orders/issues"
             },
-            "time": "2021-09-23T21:46:23+00:00"
+            "time": "2021-09-24T14:50:20+00:00"
         },
         {
             "name": "laravel/cashier",
