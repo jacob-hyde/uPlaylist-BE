@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Curator\CuratorOrderController;
 use App\Http\Controllers\Api\Curator\CuratorPlaylistController;
 use App\Http\Controllers\Api\Curator\UserTrackController;
 use App\Http\Controllers\Api\GenreController;
+use App\Http\Controllers\Api\HelpController;
 use App\Http\Controllers\Api\SpotifyAccessController;
 use App\Http\Controllers\Api\SpotifyPlaylistController;
 use Illuminate\Http\Request;
@@ -78,6 +79,8 @@ Route::group(
         });
 
         Route::get('genre', [GenreController::class, 'index']);
+
+        Route::get('help', [HelpController::class, 'index']);
 
         //----------------------------------------------------------------------------------------------
         //Curator
