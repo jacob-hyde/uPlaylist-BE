@@ -25,8 +25,6 @@ class CuratorPlaylistResource extends JsonResource
             'genres' => GenreResource::collection($this->genres),
             'followers' => $this->followers,
             'url' => $this->url,
-            'placement'=> $this->placement,
-            'price' => $this->amount ? $this->amount : $this->curator->price,
         ];
     }
 }
