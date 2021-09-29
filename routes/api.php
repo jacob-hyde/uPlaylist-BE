@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Curator\UserTrackController;
 use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\HelpController;
 use App\Http\Controllers\Api\SpotifyAccessController;
+use App\Http\Controllers\Api\SpotifyController;
 use App\Http\Controllers\Api\SpotifyPlaylistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,7 @@ Route::group(
                 Route::get('disconnect', [SpotifyAccessController::class, 'disconnectSpotify']);
                 Route::post('/', [SpotifyAccessController::class, 'store']);
                 Route::get('playlists', [SpotifyPlaylistController::class, 'index']);
+                Route::put('follow/{playlist}', [SpotifyController::class, 'follow']);
             });
             //----------------------------------------------------------------------------------------------
             //Curator

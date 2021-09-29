@@ -173,6 +173,13 @@ class SpotifyService
         return $this->_doRequest($client, 'tracks/'.$track_id) === null ? false : true;
     }
 
+    public function followPlaylist(string $playlist_id): bool
+    {
+        $client = $this->getUserApiClient();
+
+        return $this->_doRequest($client, 'playlists/' . $playlist_id . '/followers', 'PUT') === null ? false : true;
+    }
+
     /**
      * Returns the user access credentials.
      *
