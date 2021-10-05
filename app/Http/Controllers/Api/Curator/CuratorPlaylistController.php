@@ -198,8 +198,12 @@ class CuratorPlaylistController extends Controller
             $playlists_query->whereBetween('amount', [convertDollarsToCents($price_min), convertDollarsToCents($price_max)]);
         }
         $seed = date('jnY');
+        $itemsPerPage = $request->query('itemsPerPage') ?? 25;
+        if ($request->query('sortBy')) {
+            $playlists_query->orderBy($request->query('sortBy'), ($request->query('sortDesc') === 'true') ? 'desc' : 'asc');
+        }
+        $playlists = $playlists_query->inRandomOrder($seed)->paginate($itemsPerPage);
         if ($request->has('for_upsell')) {
-            $playlists = $playlists_query->inRandomOrder($seed)->paginate(25);
             if ($request->has('min_placement_rate')) {
                 $playlists = $playlists->filter(
                     function ($item) use ($request) {
@@ -207,14 +211,11 @@ class CuratorPlaylistController extends Controller
                     }
                 );
             }
-            return CuratorPlaylistResource::collection($playlists)
-                ->response()
-                ->setStatusCode(Response::HTTP_OK);
+            $collection = CuratorPlaylistResource::collection($playlists);
         } else {
-            return CuratorPlaylistResource::collection($playlists_query->inRandomOrder($seed)->paginate(25))
-                ->response()
-                ->setStatusCode(Response::HTTP_OK);
+            $collection = CuratorPlaylistResource::collection($playlists);
         }
+        return regularResponse(['playlists' => $collection, 'items_count' => CuratorPlaylist::count()]);
     }
 
     public function search(Request $request)

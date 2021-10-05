@@ -28,7 +28,7 @@ class SpotifyAccessController extends Controller
             config('services.spotify.client_id') .
             '&response_type=code&code_challenge_method=S256&code_challenge=' .
             $data['code_challenge'] .
-            '&scope=user-read-email%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-follow-read%20user-follow-modify%20user-follow-read' .
+            '&scope=user-read-email%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-follow-read%20user-follow-modify' .
             '&redirect_uri=' . config('services.spotify.redirect');
 
         return regularResponse(['url' => $url]);
