@@ -187,6 +187,7 @@ class CuratorOrderController extends Controller
         }, 0));
 
         if (auth('api')->user()) {
+            $amount += ($amount * 0.3) + 0.5;
             $payment = Payment::setAmount($amount)
                 ->setFee(0)
                 ->setUser($user)
