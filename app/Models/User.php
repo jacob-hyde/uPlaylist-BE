@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->hasOne(UserSpotify::class);
     }
 
+    public function getNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
     public function generateToken()
     {
         $token_result = $this->createToken('Personal Access Token');
