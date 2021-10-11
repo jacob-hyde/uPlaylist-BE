@@ -4,7 +4,6 @@ return [
     'user' => \App\Models\User::class,
     'from_address' => 'support@uplaylist.com',
     'from_name' => 'uPlaylist Support',
-    'ticket_create_user_guard' => 'api',
     'routes' => [
         'api' => [
             'prefix' => 'api/v1',
@@ -15,5 +14,10 @@ return [
             'prefix' => '',
             'middleware' => ['web'],
         ],
+    ],
+    'created' => [
+        'email' => null,
+        'user_guard' => 'api',
+        'callback' => null,
     ],
 ];

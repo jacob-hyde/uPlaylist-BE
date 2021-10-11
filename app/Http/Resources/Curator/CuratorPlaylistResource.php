@@ -29,7 +29,7 @@ class CuratorPlaylistResource extends JsonResource
             'url' => $this->url,
             'placement'=> $this->placement,
             'price' => $this->amount ? $this->amount : $this->curator->price,
-            'tracks' => $this->whenLoaded('spotify_playlist.tracks') ? TrackResource::collection($this->spotify_playlist->tracks) : null,
+            'tracks' => ($this->whenLoaded('spotify_playlist.tracks') && $this->spotify_playlist) ? TrackResource::collection($this->spotify_playlist->tracks) : null,
         ];
     }
 }
