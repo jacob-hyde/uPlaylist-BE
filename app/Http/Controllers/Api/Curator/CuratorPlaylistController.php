@@ -226,4 +226,9 @@ class CuratorPlaylistController extends Controller
                 ->setStatusCode(Response::HTTP_OK);
     }
 
+    public function sitemap()
+    {
+        $playlists = CuratorPlaylist::all(['slug']);
+        return regularResponse(['playlists' => $playlists]);
+    }
 }
